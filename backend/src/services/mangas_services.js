@@ -1,12 +1,12 @@
 import { conexao } from '../database/connection.js'
 
-async function listarMangasService() {
-const [rows] = await conexao.query('SELECT * FROM mangas');
+export async function listarMangasService() {
+const [rows] = await conexao.query('SELECT * FROM mangas_dados');
 return rows;
 
     
 }
-export async function buscarMangaPorIdService(manga_id) {
-    const [rows] = await conexao.query('SELECT * FROM mangas WHERE id = ?', [manga_id]);
+export async function buscarMangaPorIdService(id) {
+    const [rows] = await conexao.query('SELECT * FROM mangas_dados WHERE id = ?', [id]);
     return rows[0];
 }

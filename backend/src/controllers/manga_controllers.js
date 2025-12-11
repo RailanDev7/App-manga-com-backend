@@ -13,5 +13,18 @@ export async function ListarMangas(req, res) {
         }
     }
  
+export async function buscarMangaPorId(req, res) {
+    try {
+        const { id } = req.params;
+        const manga = await buscarMangaPorIdService(id);
+
+        if(!manga){
+            return res.status(404).json({ erro: "Mangá não encontrado"})
+        }
+        return res.json(manga);
+    } catch(error){
+        res.status(500).json({ Message: "Erro no servidor"})
+    }
     
+}   
     
