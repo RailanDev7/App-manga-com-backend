@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-export default async function ConectarBanco() {
+export async function ConectarBanco() {
     const conexao = mysql.createPool({
         host: process.envhost_db,
         user: process.env.user_db,
@@ -11,4 +11,7 @@ export default async function ConectarBanco() {
         database: process.env.database_db
     });
     
+    return conexao;
 }
+
+export const conexao = await ConectarBanco()
