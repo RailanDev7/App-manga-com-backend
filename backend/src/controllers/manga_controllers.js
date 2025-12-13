@@ -1,5 +1,5 @@
 
-import { listarMangasService, buscarMangaPorIdService } from '../services/mangas_services.js'
+import { listarMangasService, buscarMangaPorIdService, salvarMangaService } from '../services/mangas_services.js'
 
 
 export async function ListarMangas(req, res) {
@@ -28,3 +28,23 @@ export async function buscarMangaPorId(req, res) {
     
 }   
     
+export async function salvarMangaController(req, res) {
+    try {
+        const { nome, descricao } = req.body;
+        const imageUrl = req.file ? `/uploads${req.file.filename}` : null;
+
+        const id = await salvarMangaService(nome, descricao, imageUrl);
+
+        return res.status(201).json({
+            message: "Mangá salvo!",
+            id,
+            nome,
+            descricao,
+            capa: imageUrl
+        });
+
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ error: "Erro ao salvar o mangá" });
+    }
+}
