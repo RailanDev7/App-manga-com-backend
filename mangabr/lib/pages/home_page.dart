@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangabr/cads/cards.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,7 +12,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      body: Column(
+        children: [
+          Cards()
+          
+        ],
+      ),
     );
   }
 }
