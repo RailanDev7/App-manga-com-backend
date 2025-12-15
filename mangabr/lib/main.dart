@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangabr/pages/auth_pages/register.dart';
-import 'package:mangabr/pages/home_page.dart';
+import 'package:mangabr/pages/welcome_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark
       ),
       debugShowCheckedModeBanner: false,
-      home: Register(),
+      home: HomePage(),
     );
   }
 }
