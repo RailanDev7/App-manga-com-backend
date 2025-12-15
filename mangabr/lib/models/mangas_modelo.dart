@@ -1,4 +1,3 @@
-
 class MangasModelo {
   final int id;
   final String titulo;
@@ -11,12 +10,13 @@ class MangasModelo {
     required this.descricao,
     required this.imagem,
   });
+
   factory MangasModelo.fromJson(Map<String, dynamic> json) {
     return MangasModelo(
-      id:json['id'],
-      titulo:json ['titulo'],
-      descricao:json['descricao'],
-      imagem:json['imagem'],
+      id: json['id'],
+      titulo: json['titulo'],
+      descricao: json['descricao'],
+      imagem: json['imagem'],
     );
   }
 }

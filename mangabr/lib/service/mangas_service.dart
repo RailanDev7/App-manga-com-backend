@@ -3,20 +3,14 @@ import 'package:http/http.dart' as http;
 import '../models/mangas_modelo.dart';
 
 class MangasService {
-  final String baseUrl = 'http://10.0.2.2:3000';
+  static const baseUrl = "http://10.0.2.2:3000/app/mangas";
 
-  Future<List<MangasModelo>> listarMangas() async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/app/mangas/'));
+  static Future<List<MangasModelo>> listarMangas() async {
+    final response = await http.get(
+      Uri.parse("$baseUrl/mangas"),
+    );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(response.body);
-
-      return jsonList
-          .map((json) => MangasModelo.fromJson(json))
-          .toList();
-    } else {
-      throw Exception('Erro ao buscar mangas');
-    }
+    final List data = json.decode(response.body);
+    return data.map((e) => MangasModelo.fromJson(e)).toList();
   }
 }

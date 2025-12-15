@@ -45,6 +45,8 @@ class _LoginPageState extends State<LoginPage> {
       
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
+        await prefs.setBool('logado', true);
+
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login realizado com sucesso')),
