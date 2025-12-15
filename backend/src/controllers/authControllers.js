@@ -1,26 +1,50 @@
-import { SalvarUsuarios } from '../services/auth_service.js';
+import { SalvarUsuarios, loginService } from '../services/auth_service.js';
 
-export async function Register(req, res) {
+export async function register(req, res) {
   try {
     const { nome, email, senha } = req.body;
 
-    // Validação de dados
     if (!nome || !email || !senha) {
-      return res.status(400).json({ Message: "Todos os campos são obrigatórios!" });
+      return res.status(400).json({
+        message: 'Todos os campos são obrigatórios',
+      });
     }
 
-  
-    
-    const salvar = await SalvarUsuarios(nome, email, senha);
+    const usuario = await SalvarUsuarios(nome, email, senha);
 
-    if (!salvar) {
-      return res.status(400).json({ Message: "Erro ao criar conta!" }); 
+    if (!usuario) {
+      return res.status(400).json({
+        message: 'Erro ao criar conta',
+      });
     }
-    
-    res.status(201).json(salvar);
 
+    return res.status(201).json({
+      message: 'Conta criada com sucesso',
+    });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ Message: "Erro no servidor!" });
+    console.error(error);
+    return res.status(500).json({
+      message: 'Erro no servidor',
+    });
+  }
+}
+
+export async function login(req, res) {
+  try {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      return res.status(400).json({
+        message: 'Email e senha são obrigatórios',
+      });
+    }
+
+    const token = await loginService(email, senha);
+
+    return res.status(200).json({ token });
+  } catch (err) {
+    return res.status(401).json({
+      message: err.message || 'Email ou senha inválidos',
+    });
   }
 }

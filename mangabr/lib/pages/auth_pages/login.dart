@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,15 +13,72 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
   bool isLoading = false;
+
   Future<void> login() async {
     setState(() {
       isLoading = true;
     });
+
+    try {
+      final url = Uri.parse('http://10.0.2.2:3000/app/login');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': emailController.text,
+          'senha': senhaController.text,
+        }),
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final token = data['token'];
+
+        // ✅ SALVA O JWT
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login realizado com sucesso')),
+        );
+
+        // ✅ VAI PRA HOME E REMOVE LOGIN DA PILHA
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        final body = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(body['message'] ?? 'Email ou senha inválidos'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro de conexão com o servidor')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    senhaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                 ),
                 const SizedBox(height: 10),
-                //email
+
                 TextFormField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -58,13 +119,13 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 15),
-                //senha
+
                 TextFormField(
                   controller: senhaController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Senha',
-                    hintText: 'Digite uma senha',
+                    hintText: 'Digite sua senha',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) => value == null || value.length < 6
@@ -118,7 +179,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
                   child: const Text(
                     'Criar uma',
                     style: TextStyle(

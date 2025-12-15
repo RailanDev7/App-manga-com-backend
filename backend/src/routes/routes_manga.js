@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer.js';
 import {buscarMangaPorId, ListarMangas, salvarMangaController} from '../controllers/manga_controllers.js'
-import { Register } from '../controllers/authControllers.js'
+import { register, login } from '../controllers/authControllers.js';
+import { authMiddleware } from '../middlewares/auth_middle.js';
 
 
 
@@ -13,6 +14,9 @@ router.get("/mangas/:id", buscarMangaPorId);
 
 router.post("/mangas/upload", upload.single("capa"), salvarMangaController);
 
-router.post("/register", Register);
+router.post("/register", register);
+
+router.post('/login', login);
+
 
 export default router;
