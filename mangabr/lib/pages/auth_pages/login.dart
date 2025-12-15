@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         final data = jsonDecode(response.body);
         final token = data['token'];
 
-        // ✅ SALVA O JWT
+      
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
 
@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
           const SnackBar(content: Text('Login realizado com sucesso')),
         );
 
-        // ✅ VAI PRA HOME E REMOVE LOGIN DA PILHA
+        
         Navigator.pushReplacementNamed(context, '/home');
       } else {
         final body = jsonDecode(response.body);

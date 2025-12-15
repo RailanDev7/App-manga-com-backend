@@ -186,7 +186,9 @@ class _RegisterState extends State<Register> {
                 ),
 
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
                   child: const Text(
                     'Fazer login',
                     style: TextStyle(

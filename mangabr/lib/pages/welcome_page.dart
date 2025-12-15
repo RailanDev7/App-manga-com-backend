@@ -1,37 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class IntroPage extends StatelessWidget {
+  const IntroPage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  Future<void> _irParaLogin(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('jaViuIntro', true);
 
-class _HomePageState extends State<HomePage> {
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  Future<void> _irParaRegister(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('jaViuIntro', true);
+
+    Navigator.pushReplacementNamed(context, '/register');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('teste'),
-      ),
-      body: SingleChildScrollView(
+      appBar: AppBar(),
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              //gif animado com personagem de anime,
-              LottieBuilder.asset('assets/lottie/sla.json'),
-              SizedBox(height: 15),
-              Text(
+
+              Lottie.asset('assets/lottie/sla.json', height: 250),
+
+              const SizedBox(height: 15),
+
+              const Text(
                 'Bem-vindo ao seu universo de mangás',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 12),
-              Text(
+
+              const SizedBox(height: 12),
+
+              const Text(
                 'Descubra novas histórias, acompanhe seus favoritos e mergulhe em aventuras inesquecíveis.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -40,8 +51,28 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              SizedBox(height: 60,),
 
-              //bota proximo
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => _irParaLogin(context),
+                  child: const Text('Entrar'),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () => _irParaRegister(context),
+                  child: const Text('Criar conta'),
+                ),
+              ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),
