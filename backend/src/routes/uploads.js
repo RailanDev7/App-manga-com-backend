@@ -1,10 +1,14 @@
-import { Router } from "express";
-import { upload } from "../middlewares/multer.js";
-import { authMiddleware } from "../middlewares/auth_middle.js";
+import multer from 'multer';
+import path from 'path';
 
-const up = Router();
-
-
-
-
-export default up;
+export const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'src/uploads');
+    },
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      cb(null, `${Date.now()}${ext}`);
+    }
+  })
+});

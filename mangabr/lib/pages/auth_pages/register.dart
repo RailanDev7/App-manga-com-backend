@@ -25,7 +25,7 @@ class _RegisterState extends State<Register> {
     });
 
     try {
-      final url = Uri.parse('http://10.0.2.2:3000/app/register');
+      final url = Uri.parse('http://10.0.2.2:3000/users/register');
 
       final response = await http.post(
         url,

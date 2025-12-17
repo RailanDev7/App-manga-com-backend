@@ -27,7 +27,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark),
-      home: HomePage(),
+      initialRoute: !jaViuIntro
+          ? '/intro'
+          : logado
+              ? '/home'
+              : '/login',
+      routes: {
+        '/intro': (context) => const IntroPage(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const Register(),
+        '/home': (context) => const HomePage(),
+      },
     );
   }
 }

@@ -1,51 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:mangabr/cads/cards.dart';
-import 'package:mangabr/models/mangas_modelo.dart';
-import 'package:mangabr/service/mangas_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  // BUSCA LISTA DE ANIMES
+  Future<List<dynamic>> fetchAnimes() async {
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:3000/router/animes'),
+    );
 
-class _HomePageState extends State<HomePage> {
-  late Future<List<MangasModelo>> _futureMangas;
-
-  @override
-  void initState() {
-    super.initState();
-    _futureMangas = MangasService.listarMangas();
-  }
-
-  // Função para logout
-  Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('logado');
-    await prefs.remove('token');
-
-    Navigator.pushReplacementNamed(context, '/login');
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Erro ao carregar animes');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('MangáBR'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _logout,
-            tooltip: 'Sair',
-          ),
-        ],
+        backgroundColor: Colors.black,
+        title: const Text('Animes', style: TextStyle(color: Colors.white)),
       ),
-      body: FutureBuilder<List<MangasModelo>>(
-        future: _futureMangas,
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchAnimes(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -54,30 +36,68 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Erro ao carregar mangás',
-                style: Theme.of(context).textTheme.bodyLarge,
+                snapshot.error.toString(),
+                style: const TextStyle(color: Colors.white),
               ),
             );
           }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhum mangá encontrado'));
-          }
+          final animes = snapshot.data!;
 
-          final mangas = snapshot.data!;
+          return ListView(
+            children: [
+              // BANNER DESTAQUE (PRIMEIRO ANIME)
+              Container(
+                height: 220,
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      'http://10.0.2.2:3000/${animes[0]['url_capa']}',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
 
-          return GridView.builder(
-            padding: const EdgeInsets.all(12),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 0.6,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemCount: mangas.length,
-            itemBuilder: (context, index) {
-              return MangaCard(manga: mangas[index]);
-            },
+              // LISTA HORIZONTAL
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: const Text(
+                  'Populares',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 220,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: animes.length,
+                  itemBuilder: (context, index) {
+                    final anime = animes[index];
+
+                    return Container(
+                      width: 140,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            'http://10.0.2.2:3000/${anime['url_capa']}',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
