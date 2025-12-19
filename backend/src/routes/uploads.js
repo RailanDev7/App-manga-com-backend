@@ -4,7 +4,7 @@ import path from 'path';
 export const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'src/uploads');
+      cb(null, 'uploads/videos');
     },
     filename: (req, file, cb) => {
       const ext = path.extname(file.originalname);

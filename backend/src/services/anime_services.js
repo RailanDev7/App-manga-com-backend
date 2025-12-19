@@ -16,21 +16,43 @@ export async function buscaAnime() {
   return result;
   
 }
-
-export async function criarAnime({ titulo, descricao, url_capa }) {
+export async function criarEpisodio({
+  titulo_episodio,
+  url_video,
+  anime_id,
+  numero,
+  descricao,
+}) {
   const [result] = await conexao.query(
-    'INSERT INTO animes (titulo, descricao, url_capa) VALUES (?, ?, ?)',
-    [titulo, descricao, url_capa]
+    `
+    INSERT INTO episodios 
+    (titulo_episodio, url_video, anime_id, numero, descricao)
+    VALUES (?, ?, ?, ?, ?)
+    `,
+    [titulo_episodio, url_video, anime_id, numero, descricao]
   );
 
-  return result;
+  return {
+    id: result.insertId,
+    titulo_episodio,
+    url_video,
+    anime_id,
+    numero,
+    descricao,
+  };
 }
 
-export async function criarAnime({ titulo, descricao, url_capa }) {
+export async function criarAnime({ titulo, descricao, capaPath }) {
   const [result] = await conexao.query(
-    'INSERT INTO animes (titulo, descricao, url_capa) VALUES (?, ?, ?)',
-    [titulo, descricao, url_capa]
+    `INSERT INTO animes (titulo, descricao, url_capa)
+     VALUES (?, ?, ?)`,
+    [titulo, descricao, capaPath]
   );
 
-  return result;
+  return {
+    id: result.insertId,
+    titulo,
+    descricao,
+    url_capa: capaPath,
+  };
 }

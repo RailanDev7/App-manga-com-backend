@@ -1,4 +1,4 @@
-import { buscaAnimeId, buscaAnime, criarAnime} from '../services/anime_services.js';
+import { buscaAnimeId, buscaAnime, criarEpisodio, criarAnime } from '../services/anime_services.js';
 
 export async function AnimeId(req, res) {
   try {
@@ -33,27 +33,56 @@ export async function buscaTeste(req, res) {
     return res.status(500).json({ message: 'Erro no servidor' });
   }
 }
-export async function criarAnimeController(req, res) {
-  try {
-    const { titulo, descricao } = req.body;
-    const imagem = req.file;
 
-    if (!titulo || !descricao || !imagem) {
-      return res.status(400).json({ message: 'Dados incompletos' });
+export async function uploadVideo(req, res) {
+  try {
+    const { titulo_episodio, anime_id, numero, descricao } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'Vídeo obrigatório' });
     }
 
-    const url_capa = `src/uploads/${imagem.filename}`;
+    const url_video = `uploads/videos/${req.file.filename}`;
 
-    await criarAnime({
-      titulo,
+    const episodio = await criarEpisodio({
+      titulo_episodio,
+      url_video,
+      anime_id,
+      numero,
       descricao,
-      url_capa,
     });
 
-    return res.status(201).json({ message: 'Anime criado com sucesso' });
+    return res.status(201).json(episodio);
 
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: 'Erro no servidor' });
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+
+
+
+export async function criarAnimeController(req, res) {
+  try {
+    const { titulo, descricao } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'Capa obrigatória' });
+    }
+
+    const capaPath = `uploads/capas/${req.file.filename}`;
+
+    const anime = await criarAnime({
+      titulo,
+      descricao,
+      capaPath,
+    });
+
+    return res.status(201).json(anime);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Erro ao criar anime' });
   }
 }
